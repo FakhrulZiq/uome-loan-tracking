@@ -5,6 +5,7 @@ import { BorrowerModel } from '../models/borrower.entity';
 import { InstalmentScheduleModel } from '../models/instalmentSchedule.entity';
 import { LoanModel } from '../models/loan.entity';
 import { PaymentModel } from '../models/payment.entity';
+import { UserModel } from '../models/user.entity';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { PaymentModel } from '../models/payment.entity';
           InstalmentScheduleModel,
           LoanModel,
           PaymentModel,
+          UserModel,
         ],
         autoLoadEntities: false,
         synchronize: true,

@@ -126,6 +126,25 @@ type Bill {
   status: String!
 }
 
+type RegisterUserResponseDto {
+  message: String!
+}
+
+type AuthResponse {
+  accessToken: String!
+  refreshToken: String!
+  phoneNumber: String!
+  role: String!
+}
+
+type NewAccessTokenDto {
+  accessToken: String!
+}
+
+type LogOutResponse {
+  message: String!
+}
+
 type Query {
   getBorrowerList: [BorrowerListResponseDto!]!
   trackUserLoan(trackUserLoanInput: TrackUserLoanInput!): TrackUserLoanResponseDto!
@@ -144,6 +163,10 @@ input BillStatusInput {
 type Mutation {
   addBorrower(addBorrowerInput: AddBorrowerInput!): NewBorrowerResponseDto!
   createBill(createBillInput: CreateBillInput!): Bill!
+  registerUser(registerUserInput: RegisterUserInput!): RegisterUserResponseDto!
+  login(loginInput: LoginInput!): AuthResponse!
+  refreshToken(refreshTokenInput: RefreshTokenInput!): NewAccessTokenDto!
+  logout(logOutInput: RefreshTokenInput!): LogOutResponse!
 }
 
 input AddBorrowerInput {
@@ -159,4 +182,19 @@ input CreateBillInput {
   instalmentId: String!
   callbackUrl: String!
   redirectUrl: String!
+}
+
+input RegisterUserInput {
+  phoneNumber: String!
+  password: String!
+  role: String!
+}
+
+input LoginInput {
+  phoneNumber: String!
+  password: String!
+}
+
+input RefreshTokenInput {
+  refreshToken: String!
 }
