@@ -10,6 +10,9 @@ export const TYPES = {
   IPaymentRepository: 'IPaymentRepository',
   IPaymentService: 'IPaymentService',
   IBillplzService: 'IBillplzService',
+  IUserService: 'IUserService',
+  IUserRepository: 'IUserRepository',
+  IAuthService: 'IAuthService',
 };
 
 export const CRUD_ACTION = {
