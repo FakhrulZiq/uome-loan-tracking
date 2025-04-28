@@ -5,5 +5,7 @@ export interface IUser {
   phoneNumber: string;
   role: string;
   refreshToken?: string;
+  borrowerId?: string;
+  isVerified: boolean;
   audit: Audit;
 }

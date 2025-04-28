@@ -10,7 +10,7 @@ export class GenericSqlRepository<TEntity, TModel>
 {
   constructor(
     protected readonly repository: Repository<TModel>,
-    protected readonly mapper: IMapper<TEntity, TModel>,
+    protected readonly mapper?: IMapper<TEntity, TModel>,
   ) {}
 
   private applySoftDeleteFilter(

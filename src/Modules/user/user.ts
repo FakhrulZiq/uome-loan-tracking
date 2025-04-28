@@ -9,6 +9,8 @@ export class User extends Entity implements IUser {
   password: string;
   role: string;
   refreshToken?: string;
+  borrowerId?: string;
+  isVerified: boolean;
   audit: Audit;
 
   constructor(id: string, props: IUser) {
@@ -17,6 +19,8 @@ export class User extends Entity implements IUser {
     this.password = props.password;
     this.role = props.role;
     this.refreshToken = props.refreshToken;
+    this.borrowerId = props.borrowerId;
+    this.isVerified = props.isVerified;
     this.audit = props.audit;
   }
 

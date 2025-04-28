@@ -8,11 +8,18 @@ import {
 } from 'src/applications/interfaces/authService.interface';
 import { GqlAuthGuard } from './auth.guard';
 import {
+  GenerateFakeOtpIdTokenInput,
+  LoginInput,
+  RefreshTokenInput,
+  VerifyOtpInput,
+} from './dto/auth-input.dto';
+import {
   AuthResponse,
+  FakeOtpIdTokenOutput,
   LogOutResponse,
   NewAccessTokenDto,
+  VerifyOtpOutput,
 } from './dto/auth-response.dto';
-import { LoginInput, RefreshTokenInput } from './dto/login-input.dto';
 
 @Resolver()
 export class AuthResolver {
@@ -39,5 +46,19 @@ export class AuthResolver {
     @Args('logOutInput') logoutInput: RefreshTokenInput,
   ): Promise<ILogOutResponse> {
     return this._authService.logout(logoutInput);
+  }
+
+  @Mutation(() => VerifyOtpOutput)
+  async verifyOtp(
+    @Args('input') input: VerifyOtpInput,
+  ): Promise<VerifyOtpOutput> {
+    return this._authService.otpVerification(input);
+  }
+
+  @Mutation(() => FakeOtpIdTokenOutput)
+  async generateFakeOtpIdToken(
+    @Args('generateFakeIdToken') input: GenerateFakeOtpIdTokenInput,
+  ): Promise<FakeOtpIdTokenOutput> {
+    return this._authService.generateIdToken(input.phoneNumber);
   }
 }

@@ -2,18 +2,23 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import * as admin from 'firebase-admin';
 import { TYPES } from 'src/applications/constant';
 import {
   IAuthService,
+  IFakeOtpIdToken,
   ILogOutResponse,
   INewAccessToken,
   INewAccessTokenInput,
+  IOtpVerificationResponse,
   IPayloadJwt,
   IValidateUserInput,
   IValidateUserResponse,
+  IotpVerificationInput,
 } from 'src/applications/interfaces/authService.interface';
 import { IUserRepository } from 'src/applications/interfaces/userRepository.interface';
 import { IUserService } from 'src/applications/interfaces/userService.interface';
+import { FirebaseAdminService } from 'src/infrastructure/firebase/firebase-admin.service';
 import { IContextAwareLogger } from 'src/infrastructure/logger';
 import { applicationError } from 'src/utilities/exceptionInstance';
 import { User } from '../user/user';
@@ -27,6 +32,7 @@ export class AuthService implements IAuthService {
     private readonly _userRepository: IUserRepository,
     private readonly _configService: ConfigService,
     private readonly _jwtService: JwtService,
+    private readonly _firebaseAdmin: FirebaseAdminService,
     @Inject(TYPES.IApplicationLogger)
     private readonly _logger: IContextAwareLogger,
   ) {}
@@ -123,5 +129,53 @@ export class AuthService implements IAuthService {
       this._logger.error(error.message, error);
       throw error;
     }
+  }
+
+  async otpVerification(
+    input: IotpVerificationInput,
+  ): Promise<IOtpVerificationResponse> {
+    try {
+      const decodedToken = await this._firebaseAdmin
+        .getAuth()
+        .verifyIdToken(input.idToken);
+
+      await this._userService.updateVerifiedUser(decodedToken.phone_number);
+
+      return {
+        uid: decodedToken.uid,
+        phoneNumber: decodedToken.phone_number,
+      };
+    } catch (error) {
+      this._logger.error(error.message, error);
+      throw error;
+    }
+  }
+
+  async generateIdToken(phoneNumber: string): Promise<IFakeOtpIdToken> {
+    const user: User = await this._userService.findByPhoneNumber(phoneNumber);
+
+    const customToken = await admin.auth().createCustomToken(user.id);
+
+    const apiKey = this._configService.get<string>('FIREBASE_API_KEY');
+
+    const response = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: customToken,
+          returnSecureToken: true,
+        }),
+      },
+    );
+
+    const data = await response.json();
+
+    if (!data.idToken) {
+      throw new Error(`Failed to get idToken: ${JSON.stringify(data)}`);
+    }
+
+    return { idToken: data.idToken };
   }
 }

@@ -7,7 +7,15 @@ import { User } from './user';
 @Injectable()
 export class UserMapper implements IMapper<User, UserModel> {
   toPersistence(entity: User): UserModel {
-    const { password, phoneNumber, role, refreshToken, audit } = entity;
+    const {
+      password,
+      phoneNumber,
+      role,
+      refreshToken,
+      borrowerId,
+      isVerified,
+      audit,
+    } = entity;
 
     const {
       auditCreatedBy,
@@ -23,6 +31,8 @@ export class UserMapper implements IMapper<User, UserModel> {
       password,
       phoneNumber,
       role,
+      borrowerId,
+      isVerified,
       refreshToken,
       auditCreatedBy,
       auditCreatedDateTime,
@@ -35,7 +45,15 @@ export class UserMapper implements IMapper<User, UserModel> {
   }
 
   toDomain(model: UserModel): User {
-    const { password, id, phoneNumber, refreshToken, role } = model;
+    const {
+      password,
+      id,
+      phoneNumber,
+      refreshToken,
+      borrowerId,
+      isVerified,
+      role,
+    } = model;
 
     return User.create(
       {
@@ -43,6 +61,8 @@ export class UserMapper implements IMapper<User, UserModel> {
         phoneNumber,
         role,
         refreshToken,
+        borrowerId,
+        isVerified,
         audit: new AuditMapper().toDomain(model),
       },
       id,
