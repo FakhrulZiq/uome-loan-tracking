@@ -2,6 +2,10 @@ export interface IAuthService {
   validateUser(input: IValidateUserInput): Promise<IValidateUserResponse>;
   assignNewAcessToken(input: INewAccessTokenInput): Promise<INewAccessToken>;
   logout(input: INewAccessTokenInput): Promise<ILogOutResponse>;
+  otpVerification(
+    input: IotpVerificationInput,
+  ): Promise<IOtpVerificationResponse>;
+  generateIdToken(phoneNumber: string): Promise<IFakeOtpIdToken>;
 }
 
 export interface IValidateUserInput {
@@ -38,4 +42,17 @@ export interface IPayloadJwt {
   iat: number;
   phoneNumber: string;
   sub: string;
+}
+
+export interface IotpVerificationInput {
+  idToken: string;
+}
+
+export interface IOtpVerificationResponse {
+  uid: string;
+  phoneNumber: string;
+}
+
+export interface IFakeOtpIdToken {
+  idToken: string;
 }

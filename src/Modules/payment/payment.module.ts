@@ -21,6 +21,10 @@ import { PaymentController } from './payment.controller';
 import { PaymentMapper } from './payment.mapper';
 import { PaymentResolver } from './payment.resolver';
 import { PaymentService } from './payment.service';
+import { UserService } from '../user/user.service';
+import { UserRepository } from 'src/infrastructure/dataAccess/repositories/user.repository';
+import { UserModel } from 'src/infrastructure/dataAccess/models/user.entity';
+import { FirebaseAdminService } from 'src/infrastructure/firebase/firebase-admin.service';
 
 @Module({
   imports: [
@@ -29,6 +33,7 @@ import { PaymentService } from './payment.service';
       BorrowerModel,
       InstalmentScheduleModel,
       LoanModel,
+      UserModel,
     ]),
   ],
   providers: [
@@ -49,6 +54,10 @@ import { PaymentService } from './payment.service';
       useClass: BorrowerService,
     },
     {
+      provide: TYPES.IUserService,
+      useClass: UserService,
+    },
+    {
       provide: TYPES.IBorrowerRepository,
       useClass: BorrowerRepository,
     },
@@ -59,6 +68,10 @@ import { PaymentService } from './payment.service';
     {
       provide: TYPES.ILoanRepository,
       useClass: LoanRepository,
+    },
+    {
+      provide: TYPES.IUserRepository,
+      useClass: UserRepository,
     },
     {
       provide: TYPES.IInstalmentScheduleService,
@@ -74,6 +87,7 @@ import { PaymentService } from './payment.service';
     BorrowerMapper,
     InstalmentScheduleMapper,
     LoanMapper,
+    FirebaseAdminService,
   ],
   controllers: [PaymentController],
 })

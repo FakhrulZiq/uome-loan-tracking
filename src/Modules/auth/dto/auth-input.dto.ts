@@ -14,3 +14,15 @@ export class RefreshTokenInput {
   @Field()
   refreshToken: string;
 }
+
+@InputType()
+export class VerifyOtpInput {
+  @Field()
+  idToken: string;
+}
+
+@InputType()
+export class GenerateFakeOtpIdTokenInput {
+  @Field()
+  phoneNumber: string;
+}

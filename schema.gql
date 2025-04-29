@@ -145,6 +145,15 @@ type LogOutResponse {
   message: String!
 }
 
+type VerifyOtpOutput {
+  uid: String!
+  phoneNumber: String
+}
+
+type FakeOtpIdTokenOutput {
+  idToken: String!
+}
+
 type Query {
   getBorrowerList: [BorrowerListResponseDto!]!
   trackUserLoan(trackUserLoanInput: TrackUserLoanInput!): TrackUserLoanResponseDto!
@@ -167,6 +176,8 @@ type Mutation {
   login(loginInput: LoginInput!): AuthResponse!
   refreshToken(refreshTokenInput: RefreshTokenInput!): NewAccessTokenDto!
   logout(logOutInput: RefreshTokenInput!): LogOutResponse!
+  verifyOtp(input: VerifyOtpInput!): VerifyOtpOutput!
+  generateFakeOtpIdToken(generateFakeIdToken: GenerateFakeOtpIdTokenInput!): FakeOtpIdTokenOutput!
 }
 
 input AddBorrowerInput {
@@ -197,4 +208,12 @@ input LoginInput {
 
 input RefreshTokenInput {
   refreshToken: String!
+}
+
+input VerifyOtpInput {
+  idToken: String!
+}
+
+input GenerateFakeOtpIdTokenInput {
+  phoneNumber: String!
 }

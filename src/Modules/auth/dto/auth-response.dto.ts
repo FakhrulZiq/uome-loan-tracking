@@ -26,3 +26,18 @@ export class LogOutResponse {
   @Field()
   message: string;
 }
+
+@ObjectType()
+export class VerifyOtpOutput {
+  @Field()
+  uid: string;
+
+  @Field({ nullable: true })
+  phoneNumber?: string;
+}
+
+@ObjectType()
+export class FakeOtpIdTokenOutput {
+  @Field()
+  idToken: string;
+}

@@ -16,6 +16,11 @@ import { PaymentMapper } from '../payment/payment.mapper';
 import { BorrowerMapper } from './borrower.mapper';
 import { BorrowerResolver } from './borrower.resolver';
 import { BorrowerService } from './borrower.service';
+import { UserService } from '../user/user.service';
+import { UserRepository } from 'src/infrastructure/dataAccess/repositories/user.repository';
+import { UserModel } from 'src/infrastructure/dataAccess/models/user.entity';
+import { UserMapper } from '../user/user.mapper';
+import { FirebaseAdminService } from 'src/infrastructure/firebase/firebase-admin.service';
 
 @Module({
   imports: [
@@ -23,6 +28,7 @@ import { BorrowerService } from './borrower.service';
       BorrowerModel,
       LoanModel,
       InstalmentScheduleModel,
+      UserModel,
     ]),
   ],
   providers: [
@@ -39,6 +45,10 @@ import { BorrowerService } from './borrower.service';
       useClass: InstalmentScheduleService,
     },
     {
+      provide: TYPES.IUserService,
+      useClass: UserService,
+    },
+    {
       provide: TYPES.IBorrowerRepository,
       useClass: BorrowerRepository,
     },
@@ -50,12 +60,18 @@ import { BorrowerService } from './borrower.service';
       provide: TYPES.ILoanRepository,
       useClass: LoanRepository,
     },
+    {
+      provide: TYPES.IUserRepository,
+      useClass: UserRepository,
+    },
     { provide: TYPES.IApplicationLogger, useClass: ApplicationLogger },
     BorrowerMapper,
     InstalmentScheduleMapper,
     LoanMapper,
     BorrowerResolver,
     PaymentMapper,
+    FirebaseAdminService,
+    UserMapper,
   ],
 })
 export class BorrowerModule {}

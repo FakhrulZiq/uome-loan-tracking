@@ -12,6 +12,7 @@ import { UserModel } from 'src/infrastructure/dataAccess/models/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserMapper } from '../user/user.mapper';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { FirebaseAdminService } from 'src/infrastructure/firebase/firebase-admin.service';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     UserMapper,
     JwtStrategy,
     AuthResolver,
+    FirebaseAdminService,
   ],
 })
 export class AuthModule {}

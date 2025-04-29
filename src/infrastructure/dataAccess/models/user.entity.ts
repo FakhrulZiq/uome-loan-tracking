@@ -7,11 +7,16 @@ import { BorrowerModel } from './borrower.entity';
 @Entity({ name: 'user' })
 @ObjectType()
 export class UserModel extends BaseModel {
+  borrowerId?: string;
+
   @Column({ type: 'varchar', length: 100, unique: true })
   phoneNumber: string;
 
   @Column()
   password: string;
+
+  @Column()
+  isVerified: boolean;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
@@ -23,6 +28,6 @@ export class UserModel extends BaseModel {
 
   @Field(() => BorrowerModel, { nullable: true })
   @OneToOne(() => BorrowerModel, { nullable: true, cascade: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'borrowerId', referencedColumnName: 'id' })
   borrowerProfile?: BorrowerModel;
 }

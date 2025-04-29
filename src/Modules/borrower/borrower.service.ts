@@ -27,6 +27,7 @@ import { InstalmentSchedule } from '../InstalmentSchedule/InstalmentSchedule';
 import { Loan } from '../Loan/Loan';
 import { Borrower } from './borrower';
 import { BorrowerParser } from './borrower.parser';
+import { IUserService } from 'src/applications/interfaces/userService.interface';
 
 @Injectable()
 export class BorrowerService implements IBorrowerService {
@@ -41,6 +42,8 @@ export class BorrowerService implements IBorrowerService {
     private readonly _instalmentScheduleService: IInstalmentScheduleService,
     @Inject(TYPES.ILoanService)
     private readonly _loanService: ILoanService,
+    @Inject(TYPES.IUserService)
+    private readonly _userService: IUserService,
     @Inject(TYPES.IApplicationLogger)
     private readonly _logger: IContextAwareLogger,
   ) {}
@@ -111,6 +114,12 @@ export class BorrowerService implements IBorrowerService {
         totalInstalments,
         loanId,
         borrower.name,
+      );
+
+      await this._userService.registerUserBorrower(
+        borrower.phoneNumber,
+        borrower.phoneNumber,
+        borrowerId,
       );
 
       const newBorrower = BorrowerParser.newBorrower(borrower);
