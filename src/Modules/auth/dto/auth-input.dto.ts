@@ -10,6 +10,21 @@ export class LoginInput {
 }
 
 @InputType()
+export class ResetPasswordInput {
+  @Field()
+  phoneNumber: string;
+
+  @Field()
+  password: string;
+
+  @Field()
+  newPassword: string;
+
+  @Field()
+  otpIdToken: string;
+}
+
+@InputType()
 export class RefreshTokenInput {
   @Field()
   refreshToken: string;

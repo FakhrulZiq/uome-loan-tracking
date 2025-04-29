@@ -3,7 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as admin from 'firebase-admin';
-import { TYPES } from 'src/applications/constant';
+import { CRUD_ACTION, TYPES } from 'src/applications/constant';
+import { IAudit } from 'src/applications/interfaces/audit.interface';
 import {
   IAuthService,
   IFakeOtpIdToken,
@@ -12,12 +13,15 @@ import {
   INewAccessTokenInput,
   IOtpVerificationResponse,
   IPayloadJwt,
+  IResetPasswordInput,
+  IValidatePasswordResponse,
   IValidateUserInput,
   IValidateUserResponse,
   IotpVerificationInput,
 } from 'src/applications/interfaces/authService.interface';
 import { IUserRepository } from 'src/applications/interfaces/userRepository.interface';
 import { IUserService } from 'src/applications/interfaces/userService.interface';
+import { Audit } from 'src/domain/audit/audit';
 import { FirebaseAdminService } from 'src/infrastructure/firebase/firebase-admin.service';
 import { IContextAwareLogger } from 'src/infrastructure/logger';
 import { applicationError } from 'src/utilities/exceptionInstance';
@@ -50,7 +54,7 @@ export class AuthService implements IAuthService {
 
       const passwordValid = await bcrypt.compare(password, user.password);
       if (!passwordValid) {
-        throw new UnauthorizedException('Invalid credentials');
+        throw new UnauthorizedException('Password is incorrect!');
       }
 
       const payload = { phoneNumber: user.phoneNumber, sub: user.id };
@@ -74,6 +78,55 @@ export class AuthService implements IAuthService {
         phoneNumber: user.phoneNumber,
         role: user.role,
       };
+    } catch (error) {
+      this._logger.error(error.message, error);
+      throw error;
+    }
+  }
+
+  async resetPassword(
+    input: IResetPasswordInput,
+  ): Promise<IValidatePasswordResponse> {
+    try {
+      const { phoneNumber, password, newPassword, otpIdToken } = input;
+      const user: User = await this._userService.findByPhoneNumber(phoneNumber);
+
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      const passwordValid = await bcrypt.compare(password, user.password);
+      if (!passwordValid) {
+        throw new UnauthorizedException('Password is incorrect!');
+      }
+
+      const otpVerification = await this.otpVerification({
+        idToken: otpIdToken,
+      });
+      if (otpVerification.uid !== user.id) {
+        throw applicationError('OTP verification failed');
+      }
+
+      const hashedPassword: string = await bcrypt.hash(newPassword, 10);
+
+      const auditProps: IAudit = Audit.createAuditProperties(
+        phoneNumber,
+        CRUD_ACTION.update,
+      );
+      const audit: Audit = Audit.create(auditProps).getValue();
+
+      const passwordUpdate = User.update(
+        { password: hashedPassword },
+        user,
+        audit,
+      );
+
+      const savedPassword = await this._userRepository.save(passwordUpdate);
+      if (!savedPassword) {
+        throw applicationError('Update user password failed.');
+      }
+
+      return { message: 'User password reset successfully' };
     } catch (error) {
       this._logger.error(error.message, error);
       throw error;

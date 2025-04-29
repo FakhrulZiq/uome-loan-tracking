@@ -16,6 +16,12 @@ export class AuthResponse {
 }
 
 @ObjectType()
+export class ResetPasswordResponse {
+  @Field()
+  message: string;
+}
+
+@ObjectType()
 export class NewAccessTokenDto {
   @Field()
   accessToken: string;
