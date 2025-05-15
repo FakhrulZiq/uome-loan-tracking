@@ -137,6 +137,10 @@ type AuthResponse {
   role: String!
 }
 
+type ResetPasswordResponse {
+  message: String!
+}
+
 type NewAccessTokenDto {
   accessToken: String!
 }
@@ -174,6 +178,7 @@ type Mutation {
   createBill(createBillInput: CreateBillInput!): Bill!
   registerUser(registerUserInput: RegisterUserInput!): RegisterUserResponseDto!
   login(loginInput: LoginInput!): AuthResponse!
+  resetPassword(resetPasswordInput: ResetPasswordInput!): ResetPasswordResponse!
   refreshToken(refreshTokenInput: RefreshTokenInput!): NewAccessTokenDto!
   logout(logOutInput: RefreshTokenInput!): LogOutResponse!
   verifyOtp(input: VerifyOtpInput!): VerifyOtpOutput!
@@ -204,6 +209,13 @@ input RegisterUserInput {
 input LoginInput {
   phoneNumber: String!
   password: String!
+}
+
+input ResetPasswordInput {
+  phoneNumber: String!
+  password: String!
+  newPassword: String!
+  otpIdToken: String!
 }
 
 input RefreshTokenInput {

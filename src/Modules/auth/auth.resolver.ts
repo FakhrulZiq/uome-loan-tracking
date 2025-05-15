@@ -12,6 +12,7 @@ import {
   LoginInput,
   RefreshTokenInput,
   VerifyOtpInput,
+  ResetPasswordInput,
 } from './dto/auth-input.dto';
 import {
   AuthResponse,
@@ -19,6 +20,7 @@ import {
   LogOutResponse,
   NewAccessTokenDto,
   VerifyOtpOutput,
+  ResetPasswordResponse,
 } from './dto/auth-response.dto';
 
 @Resolver()
@@ -33,7 +35,16 @@ export class AuthResolver {
     return this._authService.validateUser(loginInput);
   }
 
+  @Mutation(() => ResetPasswordResponse)
+  @UseGuards(GqlAuthGuard)
+  async resetPassword(
+    @Args('resetPasswordInput') resetPasswordInput: ResetPasswordInput,
+  ) {
+    return this._authService.resetPassword(resetPasswordInput);
+  }
+
   @Mutation(() => NewAccessTokenDto)
+  @UseGuards(GqlAuthGuard)
   async refreshToken(
     @Args('refreshTokenInput') refreshTokenInput: RefreshTokenInput,
   ): Promise<INewAccessToken> {
@@ -49,6 +60,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => VerifyOtpOutput)
+  @UseGuards(GqlAuthGuard)
   async verifyOtp(
     @Args('input') input: VerifyOtpInput,
   ): Promise<VerifyOtpOutput> {
@@ -56,6 +68,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => FakeOtpIdTokenOutput)
+  @UseGuards(GqlAuthGuard)
   async generateFakeOtpIdToken(
     @Args('generateFakeIdToken') input: GenerateFakeOtpIdTokenInput,
   ): Promise<FakeOtpIdTokenOutput> {

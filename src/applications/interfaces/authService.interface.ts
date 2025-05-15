@@ -6,11 +6,19 @@ export interface IAuthService {
     input: IotpVerificationInput,
   ): Promise<IOtpVerificationResponse>;
   generateIdToken(phoneNumber: string): Promise<IFakeOtpIdToken>;
+  resetPassword(input: IResetPasswordInput): Promise<IValidatePasswordResponse>;
 }
 
 export interface IValidateUserInput {
   phoneNumber: string;
   password: string;
+}
+
+export interface IResetPasswordInput {
+  phoneNumber: string;
+  password: string;
+  newPassword: string;
+  otpIdToken: string;
 }
 
 export interface IUserParser {
@@ -23,6 +31,10 @@ export interface IValidateUserResponse {
   refreshToken: string;
   phoneNumber: string;
   role: string;
+}
+
+export interface IValidatePasswordResponse {
+  message: string;
 }
 
 export interface INewAccessToken {
